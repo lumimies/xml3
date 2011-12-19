@@ -40,7 +40,7 @@ sub end_elt {
 	flush_content;
 	my $had_content = shift @contentstack;
 	print path . "\n" unless $had_content;
-	$last_elt_path = path;
+	$last_elt_path = $had_content?path:"";
 	my $popped = pop @stack;
 	die "Element stack mismatch: Expected $popped, got $eltname" unless $popped eq $eltname;
 }
