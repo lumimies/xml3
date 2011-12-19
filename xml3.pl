@@ -7,6 +7,8 @@ use XML::Parser;
 my @stack = () ;
 my @contentstack = ();
 my $content = "";
+my $last_elt_path = "";
+
 my $dbg = 0;
 sub DEBUG { print STDERR "DEBUG: ", @_, "\n"  if $dbg }
 sub path { "/".join "/",@stack }
@@ -24,8 +26,9 @@ sub start_elt {
 	DEBUG("start_elt",@_);
 	flush_content;
 	push @stack, $eltname;
-	$contentstack[0]=1 if +@contentstack;
-	unshift @contentstack, 0;
+	print $last_elt_path . "\n" if $last_elt_path eq path;
+	$contentstack[0]=1 if 0+@contentstack;
+	unshift @contentstack, 0+@attrs;
 	while (@attrs) {
 		my $key = shift @attrs;
 		my $value = shift @attrs;
@@ -37,6 +40,7 @@ sub end_elt {
 	flush_content;
 	my $had_content = shift @contentstack;
 	print path . "\n" unless $had_content;
+	$last_elt_path = path;
 	my $popped = pop @stack;
 	die "Element stack mismatch: Expected $popped, got $eltname" unless $popped eq $eltname;
 }
